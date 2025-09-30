@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './FieldStyles.css';
 
-const NumberInput = ({ 
+const NumberInput = React.memo(({ 
   name, 
   label, 
   placeholder, 
@@ -36,10 +37,38 @@ const NumberInput = ({
         min={min}
         max={max}
         className={`field-input ${error ? 'field-input-error' : ''}`}
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={!!error}
+        aria-required={required}
       />
-      {error && <div className="error-message">{error}</div>}
+      {error && <div id={`${name}-error`} className="error-message" role="alert" aria-live="polite">{error}</div>}
     </div>
   );
+});
+
+NumberInput.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
+  required: PropTypes.bool,
+  validation: PropTypes.object,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  onChange: PropTypes.func.isRequired,
+  error: PropTypes.string,
+  unit: PropTypes.string,
+  min: PropTypes.number,
+  max: PropTypes.number
+};
+
+NumberInput.defaultProps = {
+  placeholder: '',
+  required: false,
+  validation: null,
+  value: '',
+  error: null,
+  unit: '',
+  min: undefined,
+  max: undefined
 };
 
 export default NumberInput;

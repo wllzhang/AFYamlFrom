@@ -211,6 +211,7 @@
   max-height: 200px;
   overflow-y: auto;
   z-index: 1000;
+  pointer-events: auto;
 }
 
 .assembly-option {
@@ -218,6 +219,8 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: 0.9rem;
+  pointer-events: auto;
+  user-select: none;
 }
 
 .assembly-option:hover {
@@ -227,6 +230,16 @@
 .assembly-option.selected {
   background-color: #3182ce;
   color: white;
+}
+
+.assembly-option.focused {
+  background-color: #e6f3ff;
+  outline: 2px solid #3182ce;
+  outline-offset: -2px;
+}
+
+.assembly-option.focused.selected {
+  background-color: #2c5aa0;
 }
 
 .selected-items {

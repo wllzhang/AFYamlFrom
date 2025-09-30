@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { renderInlineField, fieldPropTypes } from '../../utils/fieldRenderer';
 import './FieldStyles.css';
 
 const ListField = ({ 
@@ -63,65 +65,10 @@ const ListField = ({
   };
 
   const renderItemField = (field, itemValue, itemIndex) => {
-    const commonProps = {
-      name: `${name}_${itemIndex}_${field.name}`,
-      label: field.label,
-      required: field.required,
-      validation: field.validation,
-      value: itemValue[field.name] || field.default,
-      onChange: (fieldName, fieldValue) => handleItemChange(itemIndex, field.name, fieldValue),
-      unit: field.unit
-    };
-
-    switch (field.type) {
-      case 'text':
-        return (
-          <input
-            type="text"
-            {...commonProps}
-            className="field-input"
-            placeholder={field.placeholder}
-          />
-        );
-      case 'number':
-        return (
-          <input
-            type="number"
-            {...commonProps}
-            className="field-input"
-            min={field.validation?.min}
-            max={field.validation?.max}
-          />
-        );
-      case 'select':
-        return (
-          <select
-            {...commonProps}
-            className="field-select"
-          >
-            <option value="" disabled>
-              请选择{field.label}
-            </option>
-            {field.options?.map((option) => {
-              if (typeof option === 'string') {
-                return (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                );
-              } else {
-                return (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                );
-              }
-            })}
-          </select>
-        );
-      default:
-        return <div>未知字段类型: {field.type}</div>;
-    }
+    const fieldValue = itemValue[field.name] || field.default;
+    const handleFieldChange = (fieldValue) => handleItemChange(itemIndex, field.name, fieldValue);
+    
+    return renderInlineField(field, fieldValue, handleFieldChange);
   };
 
   return (
@@ -173,6 +120,24 @@ const ListField = ({
       {error && <div className="error-message">{error}</div>}
     </div>
   );
+};
+
+ListField.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  required: PropTypes.bool,
+  validation: PropTypes.object,
+  value: PropTypes.array,
+  onChange: PropTypes.func.isRequired,
+  error: PropTypes.string,
+  item_fields: PropTypes.arrayOf(fieldPropTypes).isRequired
+};
+
+ListField.defaultProps = {
+  required: false,
+  validation: null,
+  value: [],
+  error: null
 };
 
 export default ListField;

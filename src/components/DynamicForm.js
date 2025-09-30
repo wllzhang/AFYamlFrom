@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import yaml from 'js-yaml';
 import TextInput from './fields/TextInput';
 import EmailInput from './fields/EmailInput';
@@ -22,14 +23,7 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
   const [showRawCode, setShowRawCode] = useState(false);
 
   // 初始化表单数据
-  useEffect(() => {
-    if (formConfig) {
-      initializeFormData(formConfig);
-    }
-  }, [formConfig]);
-
-  // 初始化表单数据
-  const initializeFormData = (form) => {
+  const initializeFormData = useCallback((form) => {
     const initialData = {};
     form.fields.forEach(field => {
       if (field.default !== undefined) {
@@ -48,18 +42,25 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
     });
     setFormData(initialData);
     setErrors({});
-  };
+  }, []);
+
+  // 初始化表单数据
+  useEffect(() => {
+    if (formConfig) {
+      initializeFormData(formConfig);
+    }
+  }, [formConfig, initializeFormData]);
 
   // 获取当前表单的原始代码
-  const getCurrentFormRawCode = () => {
+  const getCurrentFormRawCode = useMemo(() => {
     if (!formConfig) return '';
     
     // 直接返回 formConfig 中的 raw_code 字段值
     return formConfig.raw_code || '';
-  };
+  }, [formConfig]);
 
   // 处理字段值变化
-  const handleFieldChange = (fieldName, value) => {
+  const handleFieldChange = useCallback((fieldName, value) => {
     setFormData(prev => ({
       ...prev,
       [fieldName]: value
@@ -76,10 +77,10 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
         }));
       }
     }
-  };
+  }, [formConfig]);
 
   // 渲染字段组件
-  const renderField = (field) => {
+  const renderField = useCallback((field) => {
     const commonProps = {
       name: field.name,
       label: field.label,
@@ -102,8 +103,8 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
           <NumberInput 
             {...commonProps} 
             unit={field.unit}
-            min={field.validation?.min}
-            max={field.validation?.max}
+            min={field.validation?.min !== undefined ? Number(field.validation.min) : undefined}
+            max={field.validation?.max !== undefined ? Number(field.validation.max) : undefined}
           />
         );
       case 'boolean':
@@ -158,7 +159,7 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
       default:
         return <div>未知字段类型: {field.type}</div>;
     }
-  };
+  }, [errors, formData, allForms, handleFieldChange]);
 
   // 提交表单
   const handleSubmit = async (e) => {
@@ -218,12 +219,12 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
       {showRawCode && (
         <div className="raw-code-container">
           <pre className="raw-code">
-            <code>{getCurrentFormRawCode()}</code>
+            <code>{getCurrentFormRawCode}</code>
           </pre>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="dynamic-form">
+      <form onSubmit={handleSubmit} className="dynamic-form" role="form" aria-label={formConfig.title}>
         {formConfig.fields.map(field => (
           <div key={field.name}>
             {renderField(field)}
@@ -241,13 +242,57 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
         </div>
 
         {submitMessage && (
-          <div className={`submit-message ${submitMessage.includes('成功') ? 'success' : 'error'}`}>
+          <div 
+            className={`submit-message ${submitMessage.includes('成功') ? 'success' : 'error'}`}
+            role="alert"
+            aria-live="polite"
+          >
             {submitMessage}
           </div>
         )}
       </form>
     </div>
   );
+};
+
+// 字段配置的PropTypes定义
+const fieldPropTypes = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  required: PropTypes.bool,
+  validation: PropTypes.object,
+  default: PropTypes.any,
+  placeholder: PropTypes.string,
+  unit: PropTypes.string,
+  options: PropTypes.array,
+  item_fields: PropTypes.array,
+  target: PropTypes.string,
+  multiple: PropTypes.bool,
+  fields: PropTypes.array
+});
+
+// 表单配置的PropTypes定义
+const formConfigPropTypes = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  type: PropTypes.string,
+  raw_code: PropTypes.string,
+  fields: PropTypes.arrayOf(fieldPropTypes).isRequired
+});
+
+DynamicForm.propTypes = {
+  formConfig: formConfigPropTypes.isRequired,
+  rawYamlText: PropTypes.string,
+  allForms: PropTypes.arrayOf(PropTypes.shape({
+    form: formConfigPropTypes
+  }))
+};
+
+DynamicForm.defaultProps = {
+  rawYamlText: '',
+  allForms: []
 };
 
 export default DynamicForm;

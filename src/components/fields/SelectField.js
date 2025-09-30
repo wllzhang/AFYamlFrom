@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './FieldStyles.css';
 
 const SelectField = ({ 
@@ -27,6 +28,9 @@ const SelectField = ({
         value={value || defaultValue || ''}
         onChange={handleChange}
         className={`field-select ${error ? 'field-input-error' : ''}`}
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={!!error}
+        aria-required={required}
       >
         <option value="" disabled>
           请选择{label}
@@ -48,9 +52,33 @@ const SelectField = ({
           }
         })}
       </select>
-      {error && <div className="error-message">{error}</div>}
+      {error && <div id={`${name}-error`} className="error-message" role="alert" aria-live="polite">{error}</div>}
     </div>
   );
+};
+
+SelectField.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      label: PropTypes.string.isRequired
+    })
+  ])),
+  default: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  required: PropTypes.bool,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onChange: PropTypes.func.isRequired,
+  error: PropTypes.string
+};
+
+SelectField.defaultProps = {
+  options: [],
+  required: false,
+  value: '',
+  error: null
 };
 
 export default SelectField;
