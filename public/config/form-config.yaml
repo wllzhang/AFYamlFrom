@@ -1,0 +1,720 @@
+forms:
+
+  # ========== 平台类型 - 导弹 ==========
+  - form:
+      raw_code: |
+        platform_type MISSILE WSF_PLATFORM  # WSF_PLATFORM     
+          icon missile
+          mover WSF_STRAIGHT_LINE_MOVER #     
+              update_interval 0.5 s #          
+              tof_and_speed  #     
+                  0.0 s 1700 kts  #     
+                20.0 s 1400 kts  #   20s 
+                50.0 s 1000 kts
+                70.0 s 800 kts
+              end_tof_and_speed
+            maximum_lateral_acceleration  9 g #      
+            guidance_mode lead_pursuit #     
+          end_mover
+          # ingore
+          processor tracker WSF_PERFECT_TRACKER  #      
+              update_interval 1 s 
+          end_processor
+          processor fuse WSF_AIR_TARGET_FUSE  #   
+              max_time_of_flight_to_detonate  100 s #       
+          end_processor
+        end_platform_type 
+      name: "MISSILE"
+      title: "平台类型 - 导弹"
+      description: "定义导弹的飞行与制导特性"
+      type: "launched_platform_type"
+      fields:
+        - name: "icon"
+          label: "平台图标"
+          type: "text"
+          default: "missile"
+
+        - name: "mover"
+          label: "运动模型"
+          type: "select"
+          options: ["WSF_STRAIGHT_LINE_MOVER","XXX"]
+          default: "WSF_STRAIGHT_LINE_MOVER"
+
+        - name: "tof_and_speed"
+          label: "飞行时间与速度表"
+          type: "list"
+          item_fields:
+            - name: "time"
+              label: "时间 (秒)"
+              type: "number"
+              unit: "s"
+            - name: "speed"
+              label: "速度 (节)"
+              type: "number"
+              unit: "kts"
+        - name: "maximum_lateral_acceleration"
+          label: "最大横向过载 (g)"
+          type: "number"
+          unit: "g"
+          default: 9
+
+        - name: "guidance_mode"
+          label: "制导模式"
+          type: "select"
+          options: ["lead_pursuit", "pure_pursuit"]
+          default: "lead_pursuit"
+  # ========== 武器效果 ==========
+  - form:
+      raw_code: |
+        weapon_effects graduated_effect WSF_GRADUATED_LETHALITY 
+          radius_and_pk  500 m 0.7
+          radius_and_pk  1000 m 0.5
+          radius_and_pk  2000 m 0.3
+        end_weapon_effects
+      name: "graduated_effect"
+      title: "武器效果 - 分级杀伤"
+      description: "定义不同半径下的杀伤概率"
+      type: "weapon_effects"
+      fields:
+        - name: "type"
+          label: "毁伤模型"
+          type: "select"
+          options: ["WSF_STRAIGHT_LINE_MOVER"]
+        - name: "radius_and_pk"
+          label: "作用半径与命中概率"
+          type: "list"
+          item_fields:
+            - name: "radius"
+              label: "半径 (米)"
+              type: "number"
+              unit: "m"
+              required: true
+            - name: "pk"
+              label: "命中概率"
+              type: "number" 
+              required: true
+              validation:
+                min: 0.0
+                max: 1.0
+
+  # ========== 武器 ==========
+  - form:
+      raw_code: |
+        weapon MISSILE_WEAPON WSF_EXPLICIT_WEAPON 
+          launched_platform_type  MISSILE 
+          weapon_effects  graduated_effect
+          # ingore
+          aux_data 
+              double strikeDistance = 20000
+          end_aux_data
+        end_weapon
+      name: "MISSILE_WEAPON"
+      title: "武器 - 导弹武器"
+      description: "显式定义的导弹武器"
+      type: "weapon"
+      fields:
+        - name: "type"
+          label: "武器模型"
+          type: "select"
+          options: ["WSF_EXPLICIT_WEAPON"]
+        - name: "launched_platform_type"
+          label: "发射平台类型"
+          type: "assembly"
+          target: "launched_platform_type"
+
+        - name: "weapon_effects"
+          label: "武器效果配置"
+          type: "assembly"
+          target: "weapon_effects"
+
+
+
+
+
+
+  - form:
+      raw_code: |
+        antenna_pattern DETECT_RADAR_ANTENNA
+          sine_pattern 
+              peak_gain 30 db
+              minimum_gain -10 db
+              azimuth_beamwidth 1 deg
+              elevation_beamwidth  1 deg
+        end_antenna_pattern 
+      name: "DETECT_RADAR_ANTENNA"
+      title: "天线图样 - 雷达天线"
+      description: "定义天线方向图的特性"
+      type: "antenna_pattern"
+      fields:
+        - name: "peak_gain"
+          label: "最大增益 (dB)"
+          type: "number"
+          unit: "db"
+          required: true
+
+        - name: "minimum_gain"
+          label: "最小增益 (dB)"
+          type: "number"
+          unit: "db"
+
+        - name: "azimuth_beamwidth"
+          label: "方位波束宽度 (°)"
+          type: "number"
+          unit: "deg"
+
+        - name: "elevation_beamwidth"
+          label: "俯仰波束宽度 (°)"
+          type: "number"
+          unit: "deg"
+
+
+  - form:
+      raw_code: |
+        sensor DETECT_RADAR WSF_RADAR_SENSOR 
+          one_m2_detect_range 50 nm
+          maximum_range 150 nm
+          antenna_height 10000 m
+          frame_time 10 s 
+          scan_mode azimuth_and_elevation
+          elevation_scan_limits -30 deg 60 deg
+          azimuth_scan_limits -60 deg 60 deg
+          
+      
+          transmitter
+              antenna_pattern DETECT_RADAR_ANTENNA
+              power 1000 kw
+              internal_loss 2 db
+              frequency 5000 mhz
+          end_transmitter
+
+          receiver 
+              antenna_pattern DETECT_RADAR_ANTENNA
+              bandwidth 2 mhz
+              noise_power -160 dbw
+          end_receiver
+          
+          probability_of_false_alarm 1.0e-6
+          swerling_case 1 
+          required_pd 0.5
+          hits_to_establish_track 3 5
+          hits_to_maintain_track 1 5
+          track_quality 0.6
+          reports_location
+          reports_bearing
+          reports_range
+          reports_iff
+          reports_elevation   
+        end_sensor
+      name: "DETECT_RADAR"
+      title: "传感器 - 探测雷达"
+      description: "雷达传感器主要性能参数"
+      type: "sensor"
+      fields:
+        - name: "type"
+          label: "传感器类型"
+          type: "select"
+          options: ["WSF_RADAR_SENSOR"]
+          default: "WSF_RADAR_SENSOR"
+
+        - name: "one_m2_detect_range"
+          label: "1㎡目标探测距离 (海里)"
+          type: "number"
+          unit: "nm"
+          required: true
+
+        - name: "maximum_range"
+          label: "最大探测距离 (海里)"
+          type: "number"
+          unit: "nm"
+
+        - name: "antenna_height"
+          label: "天线高度 (米)"
+          type: "number"
+          unit: "m"
+
+        - name: "frame_time"
+          label: "帧时间 (秒)"
+          type: "number"
+          unit: "s"
+
+        - name: "scan_mode"
+          label: "扫描模式"
+          type: "select"
+          options: ["azimuth_and_elevation"]
+
+        - name: "elevation_scan_limits"
+          label: "高程扫描限值 (度)"
+          type: "number[]"
+          unit: "deg"
+          default: [-30,60]
+        - name: "azimuth_scan_limits"
+          label: "方位角扫描限值 (度)"
+          type: "number[]"
+          unit: "deg"
+          default: [-30,60]
+
+        - name: "transmitter"
+          label: "发射器"
+          type: "group"
+          fields:
+            - name: "antenna_pattern"
+              label: "天线图样"
+              type: "assembly"
+              target: "antenna_pattern"
+
+            - name: "power"
+              label: "发射功率 (千瓦)"
+              type: "number"
+              unit: "kw"
+
+            - name: "internal_loss"
+              label: "内部损耗 (分贝)"
+              type: "number"
+              unit: "db"
+
+            - name: "frequency"
+              label: "频率 (兆赫)"
+              type: "number"
+              unit: "mhz"
+
+        - name: "receiver"
+          label: "接收器"
+          type: "group"
+          fields:
+            - name: "antenna_pattern"
+              label: "天线图样"
+              type: "assembly"
+              target: "antenna_pattern"
+              
+            - name: "bandwidth"
+              label: "带宽 (兆赫)"
+              type: "number"
+              unit: "mhz"
+
+            - name: "noise_power"
+              label: "噪声功率 (分贝瓦)"
+              type: "number"
+              unit: "dbw"
+
+        - name: "probability_of_false_alarm"
+          label: "虚警概率"
+          type: "number"
+          default: 1.0e-6
+
+        - name: "swerling_case"
+          label: "斯威林模型"
+          type: "number"
+
+        - name: "required_pd"
+          label: "所需探测概率"
+          type: "number"
+
+        - name: "hits_to_establish_track"
+          label: "建立航迹所需探测次数"
+          type: "number[]"
+          default: [3,5]
+
+        - name: "hits_to_maintain_track"
+          label: "维持航迹所需探测次数"
+          type: "number[]"
+          default: [1,5]
+
+        - name: "track_quality"
+          label: "航迹建立概率"
+          type: "number"
+          default: 0.6
+
+        - name: "reports_location"
+          label: "报告位置"
+          type: "boolean"
+
+        - name: "reports_bearing"
+          label: "报告方位"
+          type: "boolean"
+
+        - name: "reports_range"
+          label: "报告距离"
+          type: "boolean"
+
+        - name: "reports_iff"
+          label: "报告敌我识别"
+          type: "boolean"
+
+        - name: "reports_elevation"
+          label: "报告高程"
+          type: "boolean"
+    
+
+
+  # ========== 平台类型 - 战斗机 ==========
+  - form:
+      raw_code: |
+        platform_type MY_FIGHTER WSF_PLATFORM 
+          # ingore
+          script_variables 
+              string my_weaponName = "";
+          end_script_variables
+          # ingore
+          on_initialize
+            WsfWeapon weapon =  PLATFORM.WeaponEntry(0);
+            my_weaponName = weapon.Name();
+          end_on_initialize
+
+          icon f-15
+          weapon my_missile MISSILE_WEAPON 
+              quantity 10
+          end_weapon
+          
+
+          processor  my_processor WEAPON_RELEASE 
+              on_initialize 
+                weaponName = my_weaponName;
+              end_on_initialize
+          end_processor
+          
+          
+          # ingore
+          processor data_mgr WSF_TRACK_PROCESSOR 
+              purge_interval 100 s
+          end_processor
+          
+          # ingore
+          processor task_mgr WSF_TASK_PROCESSOR 
+          end_processor
+          mover WSF_AIR_MOVER 
+          end_mover    
+          
+
+          sensor ttr DETECT_RADAR 
+              on
+              ignore_same_side 
+              internal_link data_mgr
+          end_sensor
+
+        end_platform_type
+      name: "MY_FIGHTER"
+      title: "平台类型 - 战斗机"
+      description: "定义战斗机的挂载与传感器配置"
+      type: "platform_type"
+      fields:
+        - name: "type"
+          label: "平台类型"
+          type: "select"
+          options: ["WSF_PLATFORM"]
+          default: "WSF_PLATFORM"
+
+        - name: "icon"
+          label: "平台图标"
+          type: "text"
+        - name: "mover"
+          label: "运动模型"
+          type: "select"
+          options: ["WSF_AIR_MOVER"]
+          default: "WSF_AIR_MOVER"
+
+        - name: "weapon"
+          label: "挂载武器"
+          type: "assembly"
+          target: "weapon"
+
+        - name: "quantity"
+          label: "武器数量"
+          type: "number"
+          validation:
+            min: 1
+            max: 100
+
+        - name: "sensor"
+          label: "传感器配置"
+          type: "assembly"
+          target: "sensor"
+  # ================= 航路 Route =================
+  - form:
+      raw_code: |
+        route  fighter_route
+          label Waypoint-1 position 17:55:59.76s 39:57:07.52e altitude   1e4 m  speed 232 m/s
+          label Waypoint-2 position 17:05:22.37s 39:55:35.90e altitude   1e4 m
+          label Waypoint-3 position 16:18:00.08s 39:58:28.37e 
+          label Waypoint-4 position 15:17:04.96s 39:47:06.43e 
+          label Waypoint-5 position 14:28:58.56s 40:20:01.88e 
+          label Waypoint-6 position 14:55:12.20s 41:43:30.42e 
+          label Waypoint-7 position 16:19:05.52s 41:49:34.19e 
+          label Waypoint-7 position 17:25:08.67s 41:55:51.55e    
+        end_route
+      name: "fighter_route"
+      title: "航路规划"
+      type: "route"
+      description: "定义航路点及速度高度"
+      fields:
+        - name: "waypoints"
+          label: "航路点"
+          type: "list"
+          item_fields:
+            - name: "latitude"
+              label: "纬度 (°)"
+              type: "number"
+              unit: "deg"
+            - name: "longitude"
+              label: "经度 (°)"
+              type: "number"
+              unit: "deg"
+            - name: "altitude"
+              label: "高度 (m)"
+              type: "number"
+              unit: "m"
+            - name: "speed"
+              label: "速度 (m/s)"
+              type: "number"
+              unit: "m/s"
+            - name: "label"
+              label: "航路点标签"
+              type: "text"
+  - form:
+      raw_code: |
+        platform fighter-1 MY_FIGHTER 
+          side blue
+          position 17:55:59.764s 39:57:07.522e altitude 1e4 m agl  
+          use_route fighter_route
+        end_platform
+      name: "fighter-1"
+      title: "平台 - 战斗机"
+      description: "放置平台 - 战斗机,(后期拖动)"
+      type: "platform"
+      fields:
+        - name: "type"
+          label: "平台类型"
+          type: "assembly"
+          target: "platform_type"
+        - name: "side"
+          label: "平台方"
+          type: "select"
+          options: ["blue", "red"]
+          default: "blue"
+        - name: "position"
+          label: "放置位置"
+          type: "group"
+          fields:
+            - name: "latitude"
+              label: "纬度 (°)"
+              type: "number"
+              unit: "deg"
+            - name: "longitude"
+              label: "经度 (°)"
+              type: "number"
+              unit: "deg" 
+        - name: "use_route"
+          label: "使用航路"
+          type: "assembly"
+          target: "route"
+
+  - form:
+      raw_code: |
+        radar_signature  tank_radar_sig
+          state default
+              constant 1 m^2
+        end_radar_signature
+      name: "tank_radar_sig"
+      title: "雷达特征配置"
+      type: "radar_signature"
+      description: "定义雷达特征"
+      fields:
+        - name: "state"
+          label: "状态"
+          type: "list"
+          item_fields:
+            - name: "state"
+              label: "状态"
+              type: "select"
+              options: ["default","test","A","B"]
+              default: "default"
+            - name: "constant"
+              label: "反射面积"
+              type: "number"
+              unit: "m^2"
+
+  - form:
+      raw_code: |
+        infrared_signature tank_infrared_sig
+          state default
+              constant 10  w/sr
+        end_infrared_signature
+      name: "tank_infrared_sig"
+      title: "红外特征配置"
+      type: "infrared_signature"
+      description: "定义红外特征"
+      fields:
+        - name: "state"
+          label: "状态"
+          type: "list"
+          item_fields:
+            - name: "state"
+              label: "状态"
+              type: "select"
+              options: ["default","test","A","B"]
+              default: "default"
+            - name: "constant"
+              label: "反射面积"
+              type: "number"
+              unit: "m^2"
+
+  - form:
+      raw_code: |
+        optical_signature tank_optical_sig
+          state default
+              constant 100 m^2
+        end_optical_signature
+      name: "tank_optical_sig"
+      title: "光学特征配置"
+      type: "optical_signature"
+      description: "定义光学特征"
+      fields:
+        - name: "state"
+          label: "状态"
+          type: "list"
+          item_fields:
+            - name: "state"
+              label: "状态"
+              type: "select"
+              options: ["default","test","A","B"]
+              default: "default"
+            - name: "constant"
+              label: "反射面积"
+              type: "number"
+              unit: "m^2"
+
+  # ========== 平台类型 - 坦克 ==========
+  - form:
+      raw_code: |
+        platform_type MY_TANK WSF_PLATFORM 
+          icon tank
+          mover WSF_GROUND_MOVER 
+          end_mover
+          infrared_signature  tank_infrared_sig
+          optical_signature   tank_optical_sig
+          radar_signature   tank_radar_sig
+          # ingore
+          on_initialize 
+              PLATFORM.SetRadarSigState("dafault");
+              PLATFORM.SetOpticalSigState("dafault");
+              PLATFORM.SetInfraredSigState("dafault");
+          end_on_initialize
+        end_platform_type
+      name: "MY_TANK"
+      title: "平台类型 - 坦克"
+      description: "定义坦克模型"
+      type: "platform_type"
+      fields:
+        - name: "type"
+          label: "平台类型"
+          type: "select"
+          options: ["WSF_PLATFORM"]
+          default: "WSF_PLATFORM"
+        - name: "icon"
+          label: "平台图标"
+          type: "select"
+          options: ["tank"]
+
+        - name: "mover"
+          label: "运动模型"
+          type: "select"
+          options: ["WSF_GROUND_MOVER"]
+          default: "WSF_GROUND_MOVER"
+
+        - name: "infrared_signature"
+          label: "红外特征配置"
+          type: "assembly"
+          target: "infrared_signature"
+
+        - name: "optical_signature"
+          label: "光学特征配置"
+          type: "assembly"
+          target: "optical_signature"
+
+        - name: "radar_signature"
+          label: "雷达特征配置"
+          type: "assembly"
+          target: "radar_signature"
+  - form:
+      raw_code: |
+        route tank_route
+          label Waypoint-0
+          position 15:33:03.74s 39:32:26.75e altitude 0.00 m agl
+            speed 50 mph
+          label Waypoint-1
+          position 15:27:20.593s 39:56:15.115e altitude 0.00 m agl
+          label Waypoint-2
+          position 15:18:11.003s 40:17:14.501e altitude 0.00 m agl
+          label Waypoint-3
+          position 15:26:35.143s 40:30:18.651e altitude 0.00 m agl
+          label Waypoint-4
+          position 15:42:05.328s 40:12:13.352e altitude 0.00 m agl
+          label Waypoint-5
+          position 15:51:14.797s 39:49:43.993e altitude 0.00 m agl
+        end_route
+      name: "tank_route"
+      title: "航路规划"
+      type: "route"
+      description: "定义航路点及速度高度"
+      fields:
+        - name: "waypoints"
+          label: "航路点"
+          type: "list"
+          item_fields:
+            - name: "latitude"
+              label: "纬度 (°)"
+              type: "number"
+              unit: "deg"
+            - name: "longitude"
+              label: "经度 (°)"
+              type: "number"
+              unit: "deg"
+            - name: "altitude"
+              label: "高度 (m)"
+              type: "number"
+              unit: "m"
+            - name: "speed"
+              label: "速度 (m/s)"
+              type: "number"
+              unit: "m/s"
+            - name: "label"
+              label: "航路点标签"
+              type: "text"
+
+
+  - form:
+      raw_code: |
+        platform tank-1 MY_TANK 
+          side red
+          position 15:48:10.920s 39:49:10.178e
+          use_route tank_route
+        end_platform
+      name: "tank-1"
+      title: "平台 - 坦克"
+      description: "放置平台 - 坦克,(后期拖动)"
+      type: "platform"
+      fields:
+        - name: "type"
+          label: "平台类型"
+          type: "assembly"
+          target: "platform_type"
+        - name: "side"
+          label: "平台方"
+          type: "select"
+          options: ["blue", "red"]
+          default: "red"
+        - name: "position"
+          label: "放置位置"
+          type: "group"
+          fields:
+            - name: "latitude"
+              label: "纬度 (°)"
+              type: "number"
+              unit: "deg"
+            - name: "longitude"
+              label: "经度 (°)"
+              type: "number"
+              unit: "deg"
+        - name: "use_route"
+          label: "使用航路"
+          type: "assembly"
+          target: "route"

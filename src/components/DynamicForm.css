@@ -1,0 +1,203 @@
+/* 动态表单容器 */
+.dynamic-form-container {
+  background: white;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  height: fit-content;
+}
+
+/* 表单头部 */
+.form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.form-description {
+  font-size: 0.9rem;
+  color: #718096;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+/* 表单名称样式 */
+.form-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.form-name-label {
+  color: #718096;
+  font-weight: 500;
+}
+
+.form-name-value {
+  color: #4a5568;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background-color: #f7fafc;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* 原始代码按钮 */
+.raw-code-button {
+  background-color: #f7fafc;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.raw-code-button:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+/* 原始代码容器 */
+.raw-code-container {
+  margin-bottom: 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.4rem;
+  background-color: #f8f9fa;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.raw-code {
+  margin: 0;
+  padding: 1rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #2d3748;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 表单主体 */
+.dynamic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* 表单操作按钮 */
+.form-actions {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(102, 126, 234, 0.4);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 提交结果消息 */
+.submit-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.submit-message.success {
+  background-color: #f0fff4;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.submit-message.error {
+  background-color: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #feb2b2;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #718096;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .dynamic-form-container {
+    padding: 1rem;
+  }
+
+  .form-title {
+    font-size: 1.2rem;
+  }
+
+  .form-description {
+    font-size: 0.85rem;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .raw-code {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dynamic-form-container {
+    padding: 0.8rem;
+  }
+
+  .form-title {
+    font-size: 1.1rem;
+  }
+
+  .form-header {
+    margin-bottom: 1rem;
+  }
+
+  .raw-code-container {
+    max-height: 200px;
+  }
+}
+
