@@ -1,5 +1,5 @@
 {
-  "name": "yaml-form-app",
+  "name": "AFYamlFrom",
   "version": "1.0.0",
   "description": "基于YAML配置的动态表单React应用",
   "main": "index.js",
