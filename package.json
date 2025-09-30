@@ -2,6 +2,7 @@
   "name": "AFYamlFrom",
   "version": "1.0.0",
   "description": "基于YAML配置的动态表单React应用",
+  "homepage": "https://wllzhang.github.io/AFYamlFrom",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",

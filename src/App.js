@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     const loadFormsConfig = async () => {
       try {
-        const response = await fetch('/config/form-config.yaml');
+        const response = await fetch(`${process.env.PUBLIC_URL}/config/form-config.yaml`);
         const yamlText = await response.text();
         setRawYamlText(yamlText);
         const config = yaml.load(yamlText);
