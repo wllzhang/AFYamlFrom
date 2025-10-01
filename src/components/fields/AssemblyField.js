@@ -45,6 +45,25 @@ const AssemblyField = React.memo(({
     return iconMap[type] || '📄';
   };
 
+  // 根据表单类型返回对应的颜色
+  const getTypeColor = (type) => {
+    const colorMap = {
+      'launched_platform_type': '#e53e3e',
+      'weapon': '#dd6b20',
+      'weapon_effects': '#d69e2e',
+      'sensor': '#38a169',
+      'antenna_pattern': '#319795',
+      'platform_type': '#3182ce',
+      'route': '#805ad5',
+      'platform': '#d53f8c',
+      'radar_signature': '#2c7a7b',
+      'infrared_signature': '#c53030',
+      'optical_signature': '#2d3748',
+      'processor': '#718096'
+    };
+    return colorMap[type] || '#718096';
+  };
+
   // 根据target动态获取匹配的表单选项
   useEffect(() => {
     if (!target || !allForms.length) {
@@ -237,8 +256,16 @@ const AssemblyField = React.memo(({
 
   return (
     <div className="field-container">
-      <label className="field-label">
-        {label}
+      <label 
+        className="field-label"
+        style={target ? { color: getTypeColor(target) } : {}}
+      >
+        {target && (
+          <span className="assembly-label-icon">
+            {getTypeIcon(target)}
+          </span>
+        )}
+        <span>{label}</span>
         {required && <span className="required"> *</span>}
       </label>
       
@@ -292,6 +319,9 @@ const AssemblyField = React.memo(({
                 role="option"
                 aria-selected={multiple ? selectedItems.includes(option.name) : selectedItems === option.name}
                 tabIndex={-1}
+                style={{
+                  borderLeft: `4px solid ${getTypeColor(option.type)}`
+                }}
               >
                 <div className="assembly-option-content">
                   <div className="assembly-option-header">
@@ -299,7 +329,15 @@ const AssemblyField = React.memo(({
                     <span className="assembly-option-name">{option.name}</span>
                   </div>
                   <div className="assembly-option-title">{option.title}</div>
-                  <div className="assembly-option-type">[{option.type}]</div>
+                  <div 
+                    className="assembly-option-type"
+                    style={{
+                      backgroundColor: `${getTypeColor(option.type)}15`,
+                      color: getTypeColor(option.type)
+                    }}
+                  >
+                    [{option.type}]
+                  </div>
                 </div>
               </div>
             ))}
@@ -310,8 +348,16 @@ const AssemblyField = React.memo(({
           <div className="selected-items">
             {selectedItems.map(item => {
               const option = options.find(opt => opt.name === item);
+              const itemColor = option?.type ? getTypeColor(option.type) : '#3182ce';
               return (
-                <div key={item} className="selected-item">
+                <div 
+                  key={item} 
+                  className="selected-item"
+                  style={{
+                    backgroundColor: itemColor,
+                    borderColor: itemColor
+                  }}
+                >
                   <span className="selected-item-icon">{option?.icon || '📄'}</span>
                   <span className="selected-item-name">{option?.name || item}</span>
                   <button

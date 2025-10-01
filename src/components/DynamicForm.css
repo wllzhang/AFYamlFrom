@@ -112,13 +112,12 @@
 }
 
 .form-type-value {
-  color: #3182ce;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  background-color: #e6f3ff;
   padding: 0.2rem 0.5rem;
   border-radius: 0.25rem;
-  border: 1px solid #bee3f8;
+  border: 1px solid;
   font-weight: 500;
+  font-size: 0.75rem;
 }
 
 /* 原始代码按钮 */

@@ -11,8 +11,8 @@
   display: block;
   font-weight: 500;
   color: #333;
-  font-size: 0.85rem;
-  width: 10%;
+  font-size: 0.75rem;
+  width: 15%;
   flex-shrink: 0;
   padding-top: 0.5rem;
   text-align: left;
@@ -94,7 +94,7 @@
 
 /* 错误消息在左右布局中的位置调整 */
 .field-container > .error-message {
-  margin-left: calc(10% + 1rem);
+  margin-left: calc(15% + 1rem);
 }
 
 /* 单位标识 */
@@ -183,9 +183,10 @@
 }
 
 .list-item-field .field-label {
-  width: 10%;
+  width: 15%;
   padding-top: 0.5rem;
   text-align: left;
+  font-size: 0.72rem;
 }
 
 .list-item-field .field-input {
@@ -212,6 +213,14 @@
   position: relative;
   flex: 1;
   width: 100%;
+}
+
+/* Assembly 字段 label 图标 */
+.assembly-label-icon {
+  font-size: 1.1rem;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+  line-height: 1;
 }
 
 .assembly-selector {
@@ -374,10 +383,14 @@
 }
 
 .assembly-option-type {
-  font-size: 0.75rem;
-  color: #718096;
+  font-size: 0.7rem;
   padding-left: 1.7rem;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  margin-left: 1.7rem;
+  font-weight: 500;
 }
 
 .selected-items {
@@ -483,8 +496,8 @@
 }
 
 .group-field-item .field-label {
-  font-size: 0.8rem;
-  width: 10%;
+  font-size: 0.72rem;
+  width: 15%;
   text-align: left;
 }
 
