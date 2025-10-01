@@ -22,6 +22,25 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
   const [submitMessage, setSubmitMessage] = useState('');
   const [showRawCode, setShowRawCode] = useState(false);
 
+  // 根据表单类型返回对应的图标
+  const getTypeIcon = (type) => {
+    const iconMap = {
+      'launched_platform_type': '🚀',
+      'weapon': '⚔️',
+      'weapon_effects': '💥',
+      'sensor': '📡',
+      'antenna_pattern': '📶',
+      'platform_type': '✈️',
+      'route': '🗺️',
+      'platform': '🎯',
+      'radar_signature': '📊',
+      'infrared_signature': '🔴',
+      'optical_signature': '👁️',
+      'processor': '⚙️'
+    };
+    return iconMap[type] || '📄';
+  };
+
   // 初始化表单数据
   const initializeFormData = useCallback((form) => {
     const initialData = {};
@@ -196,16 +215,24 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
   return (
     <div className="dynamic-form-container">
       <div className="form-header">
-        <h2 className="form-title">{formConfig.title}</h2>
+        <h2 className="form-title">
+          {formConfig.type && (
+            <span className="form-title-icon">{getTypeIcon(formConfig.type)}</span>
+          )}
+          <span className="form-title-text">{formConfig.title}</span>
+        </h2>
         <div className="form-name">
           <span className="form-name-label">key:</span>
           <span className="form-name-value">{formConfig.name}</span>
         </div>
-       
+        {formConfig.type && (
+          <div className="form-type">
+            <span className="form-type-label">type:</span>
+            <span className="form-type-value">{formConfig.type}</span>
+          </div>
+        )}
         {formConfig.description && (
-       
           <p className="form-description">{formConfig.description}</p>
-       
         )}
         <button 
           type="button"

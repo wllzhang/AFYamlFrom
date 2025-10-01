@@ -25,6 +25,25 @@ const AssemblyField = React.memo(({
     setSelectedItems(value || (multiple ? [] : null));
   }, [value, multiple]);
 
+  // 根据表单类型返回对应的图标
+  const getTypeIcon = (type) => {
+    const iconMap = {
+      'launched_platform_type': '🚀',
+      'weapon': '⚔️',
+      'weapon_effects': '💥',
+      'sensor': '📡',
+      'antenna_pattern': '📶',
+      'platform_type': '✈️',
+      'route': '🗺️',
+      'platform': '🎯',
+      'radar_signature': '📊',
+      'infrared_signature': '🔴',
+      'optical_signature': '👁️',
+      'processor': '⚙️'
+    };
+    return iconMap[type] || '📄';
+  };
+
   // 根据target动态获取匹配的表单选项
   useEffect(() => {
     if (!target || !allForms.length) {
@@ -43,7 +62,10 @@ const AssemblyField = React.memo(({
       const form = formItem.form;
       return {
         name: form.name,
-        title: form.title || form.name
+        title: form.title || form.name,
+        type: form.type,
+        description: form.description || '',
+        icon: getTypeIcon(form.type)
       };
     });
 
@@ -77,7 +99,13 @@ const AssemblyField = React.memo(({
       return selectedItems.length > 0 ? `${selectedItems.length} 项已选择` : '请选择...';
     } else {
       const selected = options.find(opt => opt.name === selectedItems);
-      return selected ? selected.name : '请选择...';
+      return selected ? (
+        <span className="assembly-display-value">
+          <span className="assembly-icon">{selected.icon}</span>
+          <span className="assembly-name">{selected.name}</span>
+          <span className="assembly-title-hint"> - {selected.title}</span>
+        </span>
+      ) : '请选择...';
     }
   };
 
@@ -185,7 +213,14 @@ const AssemblyField = React.memo(({
                 aria-selected={multiple ? selectedItems.includes(option.name) : selectedItems === option.name}
                 tabIndex={-1}
               >
-                {option.name}
+                <div className="assembly-option-content">
+                  <div className="assembly-option-header">
+                    <span className="assembly-option-icon">{option.icon}</span>
+                    <span className="assembly-option-name">{option.name}</span>
+                  </div>
+                  <div className="assembly-option-title">{option.title}</div>
+                  <div className="assembly-option-type">[{option.type}]</div>
+                </div>
               </div>
             ))}
           </div>
@@ -197,11 +232,13 @@ const AssemblyField = React.memo(({
               const option = options.find(opt => opt.name === item);
               return (
                 <div key={item} className="selected-item">
-                  <span>{option?.name || item}</span>
+                  <span className="selected-item-icon">{option?.icon || '📄'}</span>
+                  <span className="selected-item-name">{option?.name || item}</span>
                   <button
                     type="button"
                     onClick={() => handleRemove(item)}
                     className="remove-selected-btn"
+                    aria-label={`移除 ${option?.name || item}`}
                   >
                     ×
                   </button>

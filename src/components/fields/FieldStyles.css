@@ -232,11 +232,37 @@
 
 .assembly-value {
   color: #333;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 选中值的显示样式 */
+.assembly-display-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.assembly-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.assembly-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.assembly-title-hint {
+  color: #718096;
+  font-size: 0.85rem;
+  font-weight: normal;
 }
 
 .assembly-arrow {
   color: #666;
   font-size: 0.8rem;
+  flex-shrink: 0;
 }
 
 .assembly-options {
@@ -255,12 +281,16 @@
 }
 
 .assembly-option {
-  padding: 0.5rem;
+  padding: 0.75rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.9rem;
+  transition: all 0.2s ease;
   pointer-events: auto;
   user-select: none;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.assembly-option:last-child {
+  border-bottom: none;
 }
 
 .assembly-option:hover {
@@ -270,6 +300,11 @@
 .assembly-option.selected {
   background-color: #3182ce;
   color: white;
+}
+
+.assembly-option.selected .assembly-option-title,
+.assembly-option.selected .assembly-option-type {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .assembly-option.focused {
@@ -282,6 +317,43 @@
   background-color: #2c5aa0;
 }
 
+/* 选项内容布局 */
+.assembly-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.assembly-option-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.assembly-option-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.assembly-option-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #2d3748;
+}
+
+.assembly-option-title {
+  font-size: 0.85rem;
+  color: #4a5568;
+  padding-left: 1.7rem;
+}
+
+.assembly-option-type {
+  font-size: 0.75rem;
+  color: #718096;
+  padding-left: 1.7rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
 .selected-items {
   margin-top: 1rem;
   display: flex;
@@ -292,12 +364,26 @@
 .selected-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   background-color: #3182ce;
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.35rem;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+
+.selected-item:hover {
+  background-color: #2c5aa0;
+}
+
+.selected-item-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.selected-item-name {
+  font-weight: 500;
 }
 
 .remove-selected-btn {
@@ -305,18 +391,21 @@
   border: none;
   color: white;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
   padding: 0;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 0.2rem;
+  transition: all 0.2s ease;
 }
 
 .remove-selected-btn:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
   border-radius: 50%;
+  transform: scale(1.1);
 }
 
 /* 数字数组字段样式 */
