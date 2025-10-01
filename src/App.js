@@ -8,6 +8,7 @@ function App() {
   const [formsConfig, setFormsConfig] = useState(null);
   const [rawYamlText, setRawYamlText] = useState('');
   const [loadingError, setLoadingError] = useState(null);
+  const [draggedIndex, setDraggedIndex] = useState(null);
 
   // 加载表单配置
   useEffect(() => {
@@ -39,6 +40,30 @@ function App() {
 
     loadFormsConfig();
   }, []);
+
+  // 处理表单排序的拖拽开始
+  const handleFormDragStart = (index) => {
+    setDraggedIndex(index);
+  };
+
+  // 处理表单排序的拖拽结束
+  const handleFormDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  // 处理表单排序的放置
+  const handleFormDrop = (dropIndex) => {
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      return;
+    }
+
+    const newForms = [...formsConfig];
+    const [draggedForm] = newForms.splice(draggedIndex, 1);
+    newForms.splice(dropIndex, 0, draggedForm);
+    
+    setFormsConfig(newForms);
+    setDraggedIndex(null);
+  };
 
   // 显示错误状态
   if (loadingError) {
@@ -81,10 +106,16 @@ function App() {
         <div className="forms-grid">
           {formsConfig.map((formItem, index) => (
             <DynamicForm 
-              key={index}
+              key={formItem.form.name}
               formConfig={formItem.form}
               rawYamlText={rawYamlText}
               allForms={formsConfig}
+              formIndex={index}
+              isDraggingForm={draggedIndex !== null}
+              isBeingDragged={draggedIndex === index}
+              onFormDragStart={() => handleFormDragStart(index)}
+              onFormDragEnd={handleFormDragEnd}
+              onFormDrop={() => handleFormDrop(index)}
             />
           ))}
         </div>

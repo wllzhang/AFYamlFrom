@@ -16,7 +16,17 @@ import { validateForm, validateField } from '../utils/validation';
 import { getTypeIcon, getTypeColor } from '../utils/typeConfig';
 import './DynamicForm.css';
 
-const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
+const DynamicForm = ({ 
+  formConfig, 
+  rawYamlText, 
+  allForms = [],
+  formIndex,
+  isDraggingForm = false,
+  isBeingDragged = false,
+  onFormDragStart,
+  onFormDragEnd,
+  onFormDrop
+}) => {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -201,16 +211,24 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
       name: formConfig.name,
       title: formConfig.title,
       type: formConfig.type,
-      icon: getTypeIcon(formConfig.type)
+      icon: getTypeIcon(formConfig.type),
+      isFormSort: true,
+      formIndex: formIndex
     };
     e.dataTransfer.setData('application/json', JSON.stringify(dragData));
-    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.effectAllowed = 'move';
+    
     // 添加拖拽样式
     e.currentTarget.classList.add('dragging');
     
     // 在 body 上添加拖动类型，用于高亮目标字段
     document.body.setAttribute('data-dragging-type', formConfig.type || '');
     document.body.classList.add('is-dragging-form');
+    
+    // 通知父组件开始拖拽
+    if (onFormDragStart) {
+      onFormDragStart();
+    }
   };
 
   // 处理拖拽结束
@@ -220,14 +238,41 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
     // 移除 body 上的拖动状态
     document.body.removeAttribute('data-dragging-type');
     document.body.classList.remove('is-dragging-form');
+    
+    // 通知父组件结束拖拽
+    if (onFormDragEnd) {
+      onFormDragEnd();
+    }
+  };
+
+  // 处理拖拽悬停（用于排序）
+  const handleDragOver = (e) => {
+    if (isDraggingForm && !isBeingDragged) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+  };
+
+  // 处理放置（用于排序）
+  const handleDrop = (e) => {
+    if (isDraggingForm && !isBeingDragged) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (onFormDrop) {
+        onFormDrop();
+      }
+    }
   };
 
   return (
     <div 
-      className="dynamic-form-container"
+      className={`dynamic-form-container ${isBeingDragged ? 'being-dragged' : ''} ${isDraggingForm && !isBeingDragged ? 'drop-target' : ''}`}
       draggable="true"
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
       style={formConfig.type ? {
         borderLeft: `4px solid ${getTypeColor(formConfig.type)}`
       } : {}}
@@ -361,12 +406,24 @@ DynamicForm.propTypes = {
   rawYamlText: PropTypes.string,
   allForms: PropTypes.arrayOf(PropTypes.shape({
     form: formConfigPropTypes
-  }))
+  })),
+  formIndex: PropTypes.number,
+  isDraggingForm: PropTypes.bool,
+  isBeingDragged: PropTypes.bool,
+  onFormDragStart: PropTypes.func,
+  onFormDragEnd: PropTypes.func,
+  onFormDrop: PropTypes.func
 };
 
 DynamicForm.defaultProps = {
   rawYamlText: '',
-  allForms: []
+  allForms: [],
+  formIndex: 0,
+  isDraggingForm: false,
+  isBeingDragged: false,
+  onFormDragStart: null,
+  onFormDragEnd: null,
+  onFormDrop: null
 };
 
 export default DynamicForm;
