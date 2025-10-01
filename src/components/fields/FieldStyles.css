@@ -1,5 +1,8 @@
-/* 字段容器样式 */
+/* 字段容器样式 - 改为左右布局 */
 .field-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
   margin-bottom: 0.8rem;
 }
 
@@ -8,8 +11,17 @@
   display: block;
   font-weight: 500;
   color: #333;
-  margin-bottom: 0.3rem;
   font-size: 0.85rem;
+  width: 10%;
+  flex-shrink: 0;
+  padding-top: 0.5rem;
+  text-align: left;
+}
+
+/* 字段输入区域 */
+.field-input-wrapper {
+  flex: 1;
+  width: 100%;
 }
 
 .checkbox-label {
@@ -80,6 +92,11 @@
   display: block;
 }
 
+/* 错误消息在左右布局中的位置调整 */
+.field-container > .error-message {
+  margin-left: calc(10% + 1rem);
+}
+
 /* 单位标识 */
 .unit {
   color: #666;
@@ -92,6 +109,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex: 1;
 }
 
 .field-checkbox {
@@ -100,12 +118,21 @@
   transform: translateY(1px);
 }
 
+/* 布尔字段在左右布局中的特殊处理 */
+.field-container .boolean-field .field-label {
+  width: auto;
+  text-align: left;
+  padding-top: 0;
+}
+
 /* 列表字段样式 */
 .list-field {
   border: 1px solid #e2e8f0;
   border-radius: 0.4rem;
   padding: 0.8rem;
   background-color: #f8f9fa;
+  flex: 1;
+  width: 100%;
 }
 
 .list-item {
@@ -151,7 +178,18 @@
 
 .list-item-field {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.list-item-field .field-label {
+  width: 10%;
+  padding-top: 0.5rem;
+  text-align: left;
+}
+
+.list-item-field .field-input {
+  flex: 1;
 }
 
 .add-item-btn {
@@ -172,6 +210,8 @@
 /* 装配字段样式 */
 .assembly-field {
   position: relative;
+  flex: 1;
+  width: 100%;
 }
 
 .assembly-selector {
@@ -285,6 +325,8 @@
   border-radius: 0.4rem;
   padding: 0.8rem;
   background-color: #f8f9fa;
+  flex: 1;
+  width: 100%;
 }
 
 .number-array-item {
@@ -309,6 +351,8 @@
   border-radius: 0.4rem;
   padding: 1rem;
   background-color: #f8f9fa;
+  flex: 1;
+  width: 100%;
 }
 
 .group-field-item {
@@ -325,11 +369,45 @@
 
 .group-field-item .field-label {
   font-size: 0.8rem;
-  margin-bottom: 0.25rem;
+  width: 10%;
+  text-align: left;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  /* 在小屏幕上改回上下布局 */
+  .field-container {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .field-label {
+    width: auto;
+    text-align: left;
+    padding-top: 0;
+  }
+  
+  .list-item-field {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .list-item-field .field-label {
+    width: auto;
+    text-align: left;
+    padding-top: 0;
+  }
+  
+  .group-field-item .field-label {
+    width: auto;
+    text-align: left;
+  }
+  
+  /* 错误消息在小屏幕上的位置调整 */
+  .field-container > .error-message {
+    margin-left: 0;
+  }
+
   .field-input,
   .field-select {
     padding: 0.6rem;
