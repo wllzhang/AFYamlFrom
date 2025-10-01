@@ -22,6 +22,7 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [showRawCode, setShowRawCode] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // 初始化表单数据
   const initializeFormData = useCallback((form) => {
@@ -232,44 +233,62 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
       } : {}}
     >
       <div className="form-header">
-        <h2 className="form-title">
-          {formConfig.type && (
-            <span className="form-title-icon">{getTypeIcon(formConfig.type)}</span>
-          )}
-          <span className="form-title-text">{formConfig.title}</span>
-        </h2>
-        <div className="form-name">
-          <span className="form-name-label">key:</span>
-          <span className="form-name-value">{formConfig.name}</span>
-        </div>
-        {formConfig.type && (
-          <div className="form-type">
-            <span className="form-type-label">type:</span>
-            <span 
-              className="form-type-value"
-              style={{
-                backgroundColor: `${getTypeColor(formConfig.type)}15`,
-                borderColor: `${getTypeColor(formConfig.type)}40`,
-                color: getTypeColor(formConfig.type)
-              }}
-            >
-              {formConfig.type}
-            </span>
+        <div className="form-header-top">
+          <div className="form-title-section">
+            <h2 className="form-title">
+              {formConfig.type && (
+                <span className="form-title-icon">{getTypeIcon(formConfig.type)}</span>
+              )}
+              <span className="form-title-text">{formConfig.title}</span>
+            </h2>
+            <div className="form-name">
+              <span className="form-name-label">key:</span>
+              <span className="form-name-value">{formConfig.name}</span>
+            </div>
+            {formConfig.type && (
+              <div className="form-type">
+                <span className="form-type-label">type:</span>
+                <span 
+                  className="form-type-value"
+                  style={{
+                    backgroundColor: `${getTypeColor(formConfig.type)}15`,
+                    borderColor: `${getTypeColor(formConfig.type)}40`,
+                    color: getTypeColor(formConfig.type)
+                  }}
+                >
+                  {formConfig.type}
+                </span>
+              </div>
+            )}
           </div>
+          <button 
+            type="button"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="collapse-button"
+            aria-label={isCollapsed ? '展开表单' : '折叠表单'}
+            title={isCollapsed ? '展开表单' : '折叠表单'}
+          >
+            {isCollapsed ? '▼' : '▲'}
+          </button>
+        </div>
+        
+        {!isCollapsed && (
+          <>
+            {formConfig.description && (
+              <p className="form-description">{formConfig.description}</p>
+            )}
+            <button 
+              type="button"
+              onClick={() => setShowRawCode(!showRawCode)}
+              className="raw-code-button"
+            >
+              {showRawCode ? '隐藏原始代码' : '显示原始代码'}
+            </button>
+          </>
         )}
-        {formConfig.description && (
-          <p className="form-description">{formConfig.description}</p>
-        )}
-        <button 
-          type="button"
-          onClick={() => setShowRawCode(!showRawCode)}
-          className="raw-code-button"
-        >
-          {showRawCode ? '隐藏原始代码' : '显示原始代码'}
-        </button>
       </div>
 
-      {showRawCode && (
+      {!isCollapsed && showRawCode && (
         <div className="raw-code-container">
           <pre className="raw-code">
             <code>{getCurrentFormRawCode}</code>
@@ -277,7 +296,8 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="dynamic-form" role="form" aria-label={formConfig.title}>
+      {!isCollapsed && (
+        <form onSubmit={handleSubmit} className="dynamic-form" role="form" aria-label={formConfig.title}>
         {formConfig.fields.map(field => (
           <div key={field.name}>
             {renderField(field)}
@@ -303,7 +323,8 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
             {submitMessage}
           </div>
         )}
-      </form>
+        </form>
+      )}
     </div>
   );
 };
