@@ -206,11 +206,19 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
     e.dataTransfer.effectAllowed = 'copy';
     // 添加拖拽样式
     e.currentTarget.classList.add('dragging');
+    
+    // 在 body 上添加拖动类型，用于高亮目标字段
+    document.body.setAttribute('data-dragging-type', formConfig.type || '');
+    document.body.classList.add('is-dragging-form');
   };
 
   // 处理拖拽结束
   const handleDragEnd = (e) => {
     e.currentTarget.classList.remove('dragging');
+    
+    // 移除 body 上的拖动状态
+    document.body.removeAttribute('data-dragging-type');
+    document.body.classList.remove('is-dragging-form');
   };
 
   return (

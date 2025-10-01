@@ -213,6 +213,7 @@
   position: relative;
   flex: 1;
   width: 100%;
+  transition: all 0.3s ease;
 }
 
 /* Assembly 字段 label 图标 */
@@ -221,6 +222,100 @@
   margin-right: 0.4rem;
   vertical-align: middle;
   line-height: 1;
+}
+
+/* 拖动时高亮匹配的目标字段 */
+body.is-dragging-form .assembly-field[data-target-type]:not([data-target-type=""]) {
+  position: relative;
+}
+
+/* 高亮匹配类型的assembly字段 */
+body.is-dragging-form .assembly-field[data-target-type]:not([data-target-type=""]) .assembly-selector {
+  animation: pulse-subtle 1.5s ease-in-out infinite;
+}
+
+/* 为匹配的字段添加特殊样式 */
+body[data-dragging-type] .assembly-field[data-target-type]:not([data-target-type=""]) .assembly-selector {
+  transition: all 0.3s ease;
+}
+
+/* 只高亮类型匹配的字段 */
+body[data-dragging-type="launched_platform_type"] .assembly-field[data-target-type="launched_platform_type"] .assembly-selector,
+body[data-dragging-type="weapon"] .assembly-field[data-target-type="weapon"] .assembly-selector,
+body[data-dragging-type="weapon_effects"] .assembly-field[data-target-type="weapon_effects"] .assembly-selector,
+body[data-dragging-type="sensor"] .assembly-field[data-target-type="sensor"] .assembly-selector,
+body[data-dragging-type="antenna_pattern"] .assembly-field[data-target-type="antenna_pattern"] .assembly-selector,
+body[data-dragging-type="platform_type"] .assembly-field[data-target-type="platform_type"] .assembly-selector,
+body[data-dragging-type="route"] .assembly-field[data-target-type="route"] .assembly-selector,
+body[data-dragging-type="platform"] .assembly-field[data-target-type="platform"] .assembly-selector,
+body[data-dragging-type="radar_signature"] .assembly-field[data-target-type="radar_signature"] .assembly-selector,
+body[data-dragging-type="infrared_signature"] .assembly-field[data-target-type="infrared_signature"] .assembly-selector,
+body[data-dragging-type="optical_signature"] .assembly-field[data-target-type="optical_signature"] .assembly-selector,
+body[data-dragging-type="processor"] .assembly-field[data-target-type="processor"] .assembly-selector {
+  border-color: #48bb78 !important;
+  border-width: 3px;
+  border-style: dashed;
+  background-color: #f0fff4;
+  box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.15), 0 0 20px rgba(72, 187, 120, 0.3);
+  animation: highlight-target 1.5s ease-in-out infinite;
+}
+
+/* 匹配字段的label也高亮 */
+body[data-dragging-type="launched_platform_type"] .assembly-field[data-target-type="launched_platform_type"] ~ .field-container .field-label,
+body[data-dragging-type="weapon"] .assembly-field[data-target-type="weapon"] ~ .field-container .field-label,
+body[data-dragging-type="weapon_effects"] .assembly-field[data-target-type="weapon_effects"] ~ .field-container .field-label,
+body[data-dragging-type="sensor"] .assembly-field[data-target-type="sensor"] ~ .field-container .field-label,
+body[data-dragging-type="antenna_pattern"] .assembly-field[data-target-type="antenna_pattern"] ~ .field-container .field-label,
+body[data-dragging-type="platform_type"] .assembly-field[data-target-type="platform_type"] ~ .field-container .field-label,
+body[data-dragging-type="route"] .assembly-field[data-target-type="route"] ~ .field-container .field-label,
+body[data-dragging-type="platform"] .assembly-field[data-target-type="platform"] ~ .field-container .field-label,
+body[data-dragging-type="radar_signature"] .assembly-field[data-target-type="radar_signature"] ~ .field-container .field-label,
+body[data-dragging-type="infrared_signature"] .assembly-field[data-target-type="infrared_signature"] ~ .field-container .field-label,
+body[data-dragging-type="optical_signature"] .assembly-field[data-target-type="optical_signature"] ~ .field-container .field-label,
+body[data-dragging-type="processor"] .assembly-field[data-target-type="processor"] ~ .field-container .field-label {
+  font-weight: 700;
+  transform: scale(1.05);
+}
+
+@keyframes highlight-target {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.15), 0 0 20px rgba(72, 187, 120, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(72, 187, 120, 0.25), 0 0 30px rgba(72, 187, 120, 0.4);
+  }
+}
+
+/* 拖动时让不匹配的字段变暗 */
+body.is-dragging-form .assembly-field[data-target-type]:not([data-target-type=""]) .assembly-selector {
+  opacity: 0.4;
+  filter: grayscale(50%);
+}
+
+/* 匹配的字段恢复正常并高亮 */
+body[data-dragging-type="launched_platform_type"] .assembly-field[data-target-type="launched_platform_type"] .assembly-selector,
+body[data-dragging-type="weapon"] .assembly-field[data-target-type="weapon"] .assembly-selector,
+body[data-dragging-type="weapon_effects"] .assembly-field[data-target-type="weapon_effects"] .assembly-selector,
+body[data-dragging-type="sensor"] .assembly-field[data-target-type="sensor"] .assembly-selector,
+body[data-dragging-type="antenna_pattern"] .assembly-field[data-target-type="antenna_pattern"] .assembly-selector,
+body[data-dragging-type="platform_type"] .assembly-field[data-target-type="platform_type"] .assembly-selector,
+body[data-dragging-type="route"] .assembly-field[data-target-type="route"] .assembly-selector,
+body[data-dragging-type="platform"] .assembly-field[data-target-type="platform"] .assembly-selector,
+body[data-dragging-type="radar_signature"] .assembly-field[data-target-type="radar_signature"] .assembly-selector,
+body[data-dragging-type="infrared_signature"] .assembly-field[data-target-type="infrared_signature"] .assembly-selector,
+body[data-dragging-type="optical_signature"] .assembly-field[data-target-type="optical_signature"] .assembly-selector,
+body[data-dragging-type="processor"] .assembly-field[data-target-type="processor"] .assembly-selector {
+  opacity: 1;
+  filter: grayscale(0%);
 }
 
 .assembly-selector {

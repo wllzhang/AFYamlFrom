@@ -232,7 +232,10 @@ const AssemblyField = React.memo(({
         {required && <span className="required"> *</span>}
       </label>
       
-      <div className="assembly-field">
+      <div 
+        className="assembly-field"
+        data-target-type={target || ''}
+      >
         <div 
           ref={selectorRef}
           className={`assembly-selector ${isDragOver ? 'drag-over' : ''}`}
