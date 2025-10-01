@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { getTypeIcon, getTypeColor } from '../../utils/typeConfig';
 import './FieldStyles.css';
 
 const AssemblyField = React.memo(({ 
@@ -25,44 +26,6 @@ const AssemblyField = React.memo(({
   useEffect(() => {
     setSelectedItems(value || (multiple ? [] : null));
   }, [value, multiple]);
-
-  // 根据表单类型返回对应的图标
-  const getTypeIcon = (type) => {
-    const iconMap = {
-      'launched_platform_type': '🚀',
-      'weapon': '⚔️',
-      'weapon_effects': '💥',
-      'sensor': '📡',
-      'antenna_pattern': '📶',
-      'platform_type': '✈️',
-      'route': '🗺️',
-      'platform': '🎯',
-      'radar_signature': '📊',
-      'infrared_signature': '🔴',
-      'optical_signature': '👁️',
-      'processor': '⚙️'
-    };
-    return iconMap[type] || '📄';
-  };
-
-  // 根据表单类型返回对应的颜色
-  const getTypeColor = (type) => {
-    const colorMap = {
-      'launched_platform_type': '#e53e3e',
-      'weapon': '#dd6b20',
-      'weapon_effects': '#d69e2e',
-      'sensor': '#38a169',
-      'antenna_pattern': '#319795',
-      'platform_type': '#3182ce',
-      'route': '#805ad5',
-      'platform': '#d53f8c',
-      'radar_signature': '#2c7a7b',
-      'infrared_signature': '#c53030',
-      'optical_signature': '#2d3748',
-      'processor': '#718096'
-    };
-    return colorMap[type] || '#718096';
-  };
 
   // 根据target动态获取匹配的表单选项
   useEffect(() => {
