@@ -27,16 +27,16 @@
 
 .forms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 1.5rem;
   align-items: start;
+  grid-auto-rows: max-content;
 }
 
 /* 响应式网格 */
-@media (max-width: 1200px) {
+@media (min-width: 1800px) {
   .forms-grid {
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
   }
 }
 
