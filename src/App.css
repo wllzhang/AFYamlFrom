@@ -16,13 +16,54 @@
   margin: 0 auto;
 }
 
+/* 头部区域 */
+.header-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
 .main-title {
   text-align: center;
   color: white;
-  margin-bottom: 2rem;
+  margin: 0;
   font-size: 2.5rem;
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 一键折叠/展开按钮 */
+.toggle-all-button {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-all-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-all-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .forms-grid {
@@ -46,9 +87,19 @@
     gap: 1rem;
   }
   
+  .header-section {
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
   .main-title {
     font-size: 2rem;
-    margin-bottom: 1.5rem;
+  }
+  
+  .toggle-all-button {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
   }
 }
 

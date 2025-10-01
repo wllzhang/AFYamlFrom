@@ -9,6 +9,7 @@ function App() {
   const [rawYamlText, setRawYamlText] = useState('');
   const [loadingError, setLoadingError] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const [allCollapsed, setAllCollapsed] = useState(false);
 
   // 加载表单配置
   useEffect(() => {
@@ -102,7 +103,16 @@ function App() {
   return (
     <div className="App">
       <div className="forms-container">
-        <h1 className="main-title">表单配置系统</h1>
+        <div className="header-section">
+          <h1 className="main-title">表单配置系统</h1>
+          <button 
+            className="toggle-all-button"
+            onClick={() => setAllCollapsed(!allCollapsed)}
+            title={allCollapsed ? '展开所有表单' : '折叠所有表单'}
+          >
+            {allCollapsed ? '📂 展开所有' : '📁 折叠所有'}
+          </button>
+        </div>
         <div className="forms-grid">
           {formsConfig.map((formItem, index) => (
             <DynamicForm 
@@ -116,6 +126,7 @@ function App() {
               onFormDragStart={() => handleFormDragStart(index)}
               onFormDragEnd={handleFormDragEnd}
               onFormDrop={() => handleFormDrop(index)}
+              globalCollapsed={allCollapsed}
             />
           ))}
         </div>

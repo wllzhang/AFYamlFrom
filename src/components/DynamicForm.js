@@ -25,7 +25,8 @@ const DynamicForm = ({
   isBeingDragged = false,
   onFormDragStart,
   onFormDragEnd,
-  onFormDrop
+  onFormDrop,
+  globalCollapsed = false
 }) => {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
@@ -33,6 +34,11 @@ const DynamicForm = ({
   const [submitMessage, setSubmitMessage] = useState('');
   const [showRawCode, setShowRawCode] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // 响应全局折叠状态变化
+  useEffect(() => {
+    setIsCollapsed(globalCollapsed);
+  }, [globalCollapsed]);
 
   // 初始化表单数据
   const initializeFormData = useCallback((form) => {
@@ -412,7 +418,8 @@ DynamicForm.propTypes = {
   isBeingDragged: PropTypes.bool,
   onFormDragStart: PropTypes.func,
   onFormDragEnd: PropTypes.func,
-  onFormDrop: PropTypes.func
+  onFormDrop: PropTypes.func,
+  globalCollapsed: PropTypes.bool
 };
 
 DynamicForm.defaultProps = {
@@ -423,7 +430,8 @@ DynamicForm.defaultProps = {
   isBeingDragged: false,
   onFormDragStart: null,
   onFormDragEnd: null,
-  onFormDrop: null
+  onFormDrop: null,
+  globalCollapsed: false
 };
 
 export default DynamicForm;
