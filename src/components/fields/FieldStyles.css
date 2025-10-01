@@ -223,11 +223,37 @@
   border-radius: 0.4rem;
   background-color: white;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
+  min-height: 42px;
 }
 
 .assembly-selector:hover {
   border-color: #3182ce;
+}
+
+.assembly-selector.drag-over {
+  border-color: #48bb78;
+  border-style: dashed;
+  background-color: #f0fff4;
+  box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.drag-hint {
+  color: #48bb78;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .assembly-value {

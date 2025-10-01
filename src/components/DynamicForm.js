@@ -212,8 +212,32 @@ const DynamicForm = ({ formConfig, rawYamlText, allForms = [] }) => {
     return <div className="loading">加载中...</div>;
   }
 
+  // 处理拖拽开始
+  const handleDragStart = (e) => {
+    const dragData = {
+      name: formConfig.name,
+      title: formConfig.title,
+      type: formConfig.type,
+      icon: getTypeIcon(formConfig.type)
+    };
+    e.dataTransfer.setData('application/json', JSON.stringify(dragData));
+    e.dataTransfer.effectAllowed = 'copy';
+    // 添加拖拽样式
+    e.currentTarget.classList.add('dragging');
+  };
+
+  // 处理拖拽结束
+  const handleDragEnd = (e) => {
+    e.currentTarget.classList.remove('dragging');
+  };
+
   return (
-    <div className="dynamic-form-container">
+    <div 
+      className="dynamic-form-container"
+      draggable="true"
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <div className="form-header">
         <h2 className="form-title">
           {formConfig.type && (

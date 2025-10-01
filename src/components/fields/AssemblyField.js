@@ -17,6 +17,7 @@ const AssemblyField = React.memo(({
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [isDragOver, setIsDragOver] = useState(false);
   const selectorRef = useRef(null);
   const optionsRef = useRef(null);
 
@@ -148,6 +149,74 @@ const AssemblyField = React.memo(({
     }
   };
 
+  // 处理拖拽进入
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      const data = e.dataTransfer.getData('application/json');
+      if (data) {
+        const dragData = JSON.parse(data);
+        // 只允许拖放匹配 target 类型的表单
+        if (dragData.type === target) {
+          e.dataTransfer.dropEffect = 'copy';
+          setIsDragOver(true);
+        } else {
+          e.dataTransfer.dropEffect = 'none';
+        }
+      }
+    } catch (err) {
+      // 如果还没有数据，预先设置为允许拖放
+      e.dataTransfer.dropEffect = 'copy';
+      setIsDragOver(true);
+    }
+  }, [target]);
+
+  // 处理拖拽离开
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  // 处理拖放
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    try {
+      const data = e.dataTransfer.getData('application/json');
+      if (!data) return;
+
+      const dragData = JSON.parse(data);
+      
+      // 检查类型是否匹配
+      if (dragData.type !== target) {
+        return;
+      }
+
+      // 查找是否存在这个选项
+      const option = options.find(opt => opt.name === dragData.name);
+      if (!option) return;
+
+      // 添加到选中项
+      if (multiple) {
+        if (!selectedItems.includes(dragData.name)) {
+          const newSelection = [...selectedItems, dragData.name];
+          setSelectedItems(newSelection);
+          onChange(name, newSelection);
+        }
+      } else {
+        setSelectedItems(dragData.name);
+        onChange(name, dragData.name);
+      }
+    } catch (err) {
+      console.error('拖放处理错误:', err);
+    }
+  }, [target, options, multiple, selectedItems, onChange, name]);
+
   // 点击外部关闭下拉菜单
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -176,9 +245,12 @@ const AssemblyField = React.memo(({
       <div className="assembly-field">
         <div 
           ref={selectorRef}
-          className="assembly-selector"
+          className={`assembly-selector ${isDragOver ? 'drag-over' : ''}`}
           onClick={() => setIsOpen(!isOpen)}
           onKeyDown={handleKeyDown}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
           tabIndex={0}
           role="combobox"
           aria-expanded={isOpen}
@@ -187,7 +259,15 @@ const AssemblyField = React.memo(({
           aria-invalid={!!error}
           aria-required={required}
         >
-          <span className="assembly-value">{getDisplayValue()}</span>
+          <span className="assembly-value">
+            {isDragOver ? (
+              <span className="drag-hint">
+                📥 拖放表单到这里
+              </span>
+            ) : (
+              getDisplayValue()
+            )}
+          </span>
           <span className="assembly-arrow" aria-hidden="true">{isOpen ? '▲' : '▼'}</span>
         </div>
         
