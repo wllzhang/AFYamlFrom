@@ -148,23 +148,23 @@ end_platform_type
 
 
 
-radar_signature  tank_radar_sig
+radar_signature  target_radar_sig
    state default
       constant 1 m^2
 end_radar_signature
  
-infrared_signature tank_infrared_sig
+infrared_signature target_infrared_sig
    state default
       constant 10  w/sr
 end_infrared_signature
 
  
-optical_signature tank_optical_sig
+optical_signature target_optical_sig
    state default
       constant 100 m^2
 end_optical_signature
 
-route tank_route
+route target_route
       label Waypoint-0
       position 15:33:03.74s 39:32:26.75e altitude   1e4 m  speed 232 m/s
          speed 50 mph
@@ -184,13 +184,13 @@ end_route
 
 
 
-platform_type MY_TANK WSF_PLATFORM 
-   icon tank
-   mover WSF_GROUND_MOVER  
+platform_type TARGET_AIR WSF_PLATFORM 
+   icon f-15
+   mover WSF_AIR_MOVER   
    end_mover
-   infrared_signature  tank_infrared_sig
-   optical_signature   tank_optical_sig
-   radar_signature   tank_radar_sig
+   infrared_signature  target_infrared_sig
+   optical_signature   target_optical_sig
+   radar_signature   target_radar_sig
    # ingore
    on_initialize 
       PLATFORM.SetRadarSigState("dafault");

@@ -11,9 +11,9 @@ platform fighter-1 MY_FIGHTER
 end_platform
 
 
-platform tank-1 MY_TANK 
+platform target_-1 TARGET_AIR 
    side red
    position 15:48:10.920s 39:49:10.178e  altitude 1e4 m agl  
-   use_route tank_route
+   use_route target_route
 end_platform
 

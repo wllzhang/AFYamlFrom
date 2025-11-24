@@ -1,0 +1,11 @@
+2025-11-24 16:54:51 file start.txt
+2025-11-24 16:54:51 file scenarios.txt
+2025-11-24 16:54:51 file define.txt
+2025-11-24 16:54:51 file processors.txt
+2025-11-24 16:54:51 version wsf 2.9.0
+2025-11-24 16:54:51 file start.txt
+2025-11-24 16:54:51 111
+2025-11-24 16:54:51 AER output file: output/start.aer
+2025-11-24 16:54:51 Event output file: output/start.evt
+2025-11-24 16:54:51 start 1
+2025-11-24 16:54:51 complete 3000.001 0.070 0.078

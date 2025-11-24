@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsf-ide-project-file>
+ <wsf-ide-project project-directory="">
+  <wsf-ide-scenario command-line-args="$(SCENARIO_FILES)" working-directory="">
+   <file-item file-path="start.txt" file-type="file-main-source"/>
+   <wsf-exe-info application-name="mission" application-version="2.9.0" application-alias="mission 2.9.0" application-path="D:\Program Files\AF\afsim-2.9.0-win64\bin\mission.exe"/>
+  </wsf-ide-scenario>
+  <proxy-settings>
+   <as name="root"/>
+  </proxy-settings>
+ </wsf-ide-project>
+</wsf-ide-project-file>
